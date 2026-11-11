@@ -1,0 +1,118 @@
+# Todo el sistema: base de datos (PostgreSQL + pgvector), backend-agente (NestJS) y frontend-agente (Next.js).
+#
+#   docker compose up --build -d             construye y levanta los tres
+#   docker compose logs -f backend-agente    ver el registro del backend
+#   docker compose down                      apaga todo (los datos se conservan en el volumen)
+#
+# Después abre http://127.0.0.1:3100
+#
+# Ollama (el modelo de lenguaje) corre FUERA de Docker, en este PC, para aprovechar la GPU: el backend lo alcanza por
+# host.docker.internal:11434. Necesita `ollama serve` en marcha y los modelos qwen2.5:14b y nomic-embed-text.
+#
+# Secretos del chat (DEEPSEEK_API_KEY, CLAUDE_CODE_OAUTH_TOKEN): en el archivo .env junto a este (no se comparte).
+name: agente-ambiental
+
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: agente-ambiental-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: agente
+      POSTGRES_PASSWORD: agente_local
+      POSTGRES_DB: agente_ambiental
+    ports:
+      - "127.0.0.1:5433:5432" # solo desde este PC; el 5432 suele estar ocupado por otro Postgres
+    volumes:
+      - agente_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U agente -d agente_ambiental"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  backend-agente:
+    build: ./backend-agente
+    container_name: backend-agente
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_PORT: "5432"
+      DB_USERNAME: agente
+      DB_PASSWORD: agente_local
+      DB_DATABASE: agente_ambiental
+      HOST: 0.0.0.0 # dentro del contenedor; hacia afuera solo se publica en 127.0.0.1 (ver ports)
+      PORT: "4000"
+      CORS_ORIGINS: http://127.0.0.1:3100,http://localhost:3100
+      OLLAMA_URL: http://host.docker.internal:11434
+      # chat libre
+      DEEPSEEK_URL: ${DEEPSEEK_URL:-https://api.deepseek.com}
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
+      DEEPSEEK_MODELS: ${DEEPSEEK_MODELS:-}
+      CLAUDE_CODE_OAUTH_TOKEN: ${CLAUDE_CODE_OAUTH_TOKEN:-} # `claude setup-token` en el PC
+      STT_URL: http://stt:8000 # voz a texto (Whisper local)
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "127.0.0.1:4000:4000" # API y Swagger (/docs); el navegador normalmente entra por el frontend
+    volumes:
+      - ./backend-agente/data:/app/data:ro # archivos de datos de entrada (CSV / Excel de la RMCAB)
+      - ./backend-agente/storage/reports:/app/storage/reports # reportes generados (DOCX, gráficos, trazabilidad)
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:4000/api/salud').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 15s
+
+  # Voz a texto: Whisper (faster-whisper) en la GPU con la API de OpenAI (/v1/audio/transcriptions). El audio no sale del PC.
+  # El modelo (large-v3-turbo, ~1,6 GB) se descarga la primera vez que el backend lo pide y queda en el volumen.
+  stt:
+    image: ghcr.io/speaches-ai/speaches:latest-cuda
+    container_name: stt-agente
+    restart: unless-stopped
+    environment:
+      WHISPER__INFERENCE_DEVICE: cuda
+      WHISPER__COMPUTE_TYPE: int8_float16 # menos VRAM: comparte la RTX 3060 (12 GB) con Ollama
+      WHISPER__TTL: "600" # libera la GPU tras 10 min sin uso
+      ENABLE_UI: "false"
+      LOG_LEVEL: info
+    volumes:
+      - stt_modelos:/home/ubuntu/.cache/huggingface/hub
+    ports:
+      - "127.0.0.1:8000:8000" # solo desde este PC (el backend entra por la red interna)
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 8
+      start_period: 30s
+
+  frontend-agente:
+    build:
+      context: ./frontend-agente
+      args:
+        BACKEND_URL: http://backend-agente:4000 # a dónde reenvía /api/* (se fija al construir la imagen)
+    container_name: frontend-agente
+    restart: unless-stopped
+    depends_on:
+      backend-agente:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:3100:3000"
+
+volumes:
+  agente_pgdata:
+    name: agente_ambiental_pgdata
+  stt_modelos:
+    name: agente_ambiental_stt_modelos

@@ -1,0 +1,186 @@
+# Base de conocimiento: calidad del aire, Resolución 2254 de 2017 (MinAmbiente)
+# Solo datos. El motor de reglas (Fase 2) los consume; aquí no hay lógica.
+#
+# Transcrito el 2026-11-03 del texto de la norma publicado por la Alcaldía de Bogotá (SISJUR):
+#   https://www.alcaldiabogota.gov.co/sisjur/normas/Norma1.jsp?i=82634
+# Tablas 1-5 leídas del texto de la página (no de un resumen). La Tabla 6 (puntos de corte del ICA)
+# es una IMAGEN en esa fuente y NO está transcrita: ver `pendientes`.
+# Unidades de todos los límites: µg/m³, a condiciones de referencia.
+
+norma:
+  nombre: Resolución 2254 de 2017
+  emisor: Ministerio de Ambiente y Desarrollo Sostenible
+  expedicion: 2017-11-01
+  diario_oficial: "50.415 (2017-11-12)"
+  vigencia_desde: 2018-01-01
+  deroga: [Resolución 601 de 2006, Resolución 610 de 2010]
+  estado_verificado:
+    fecha: 2026-11-03
+    evidencia: >
+      La Resolución 0858 de 2026 (MinAmbiente, Diario Oficial 53.566 del 2026-07-27) la describe en
+      sus considerandos como "la norma nacional vigente en materia de calidad del aire ambiente".
+      La fuente de la Alcaldía no registra modificaciones posteriores.
+
+# Cómo se llaman las variables en los datos de la RMCAB (src/adaptador_rmcab.py)
+contaminantes:
+  PM10:  {nombre: Material particulado PM10,  nombres_rmcab: [PM10],  unidad_norma: "µg/m3"}
+  PM2.5: {nombre: Material particulado PM2.5, nombres_rmcab: [PM2.5], unidad_norma: "µg/m3"}
+  SO2:   {nombre: Dióxido de azufre,          nombres_rmcab: [SO2],   unidad_norma: "µg/m3", unidad_rmcab: ppb}
+  NO2:   {nombre: Dióxido de nitrógeno,       nombres_rmcab: [NO2],   unidad_norma: "µg/m3", unidad_rmcab: ppb}
+  O3:    {nombre: Ozono troposférico,         nombres_rmcab: [OZONO], unidad_norma: "µg/m3", unidad_rmcab: ppb}
+  CO:    {nombre: Monóxido de carbono,        nombres_rmcab: [CO],    unidad_norma: "µg/m3", unidad_rmcab: ppm}
+
+# Art. 2, Tabla 1: niveles máximos permisibles vigentes desde 2018-01-01
+limites:
+  - {id: LIM-PM10-ANUAL, contaminante: PM10,  promedio: anual,   limite: 50,    fuente: "Res. 2254/2017, Art. 2, Tabla 1"}
+  - id: LIM-PM10-24H
+    contaminante: PM10
+    promedio: 24h
+    limite: 75            # Parágrafo 1: desde 2018-07-01
+    limite_inicial: 100   # Tabla 1, rigió del 2018-01-01 al 2018-06-30
+    fuente: "Res. 2254/2017, Art. 2, Tabla 1 y Parágrafo 1"
+  - {id: LIM-PM25-ANUAL, contaminante: PM2.5, promedio: anual,   limite: 25,    fuente: "Res. 2254/2017, Art. 2, Tabla 1"}
+  - id: LIM-PM25-24H
+    contaminante: PM2.5
+    promedio: 24h
+    limite: 37            # Parágrafo 1: desde 2018-07-01
+    limite_inicial: 50
+    fuente: "Res. 2254/2017, Art. 2, Tabla 1 y Parágrafo 1"
+  - {id: LIM-SO2-24H,  contaminante: SO2,   promedio: 24h,     limite: 50,    fuente: "Res. 2254/2017, Art. 2, Tabla 1"}
+  - {id: LIM-SO2-1H,   contaminante: SO2,   promedio: 1h,      limite: 100,   fuente: "Res. 2254/2017, Art. 2, Tabla 1"}
+  - {id: LIM-NO2-ANUAL, contaminante: NO2,  promedio: anual,   limite: 60,    fuente: "Res. 2254/2017, Art. 2, Tabla 1"}
+  - {id: LIM-NO2-1H,   contaminante: NO2,   promedio: 1h,      limite: 200,   fuente: "Res. 2254/2017, Art. 2, Tabla 1"}
+  - {id: LIM-O3-8H,    contaminante: O3,    promedio: 8h,      limite: 100,   fuente: "Res. 2254/2017, Art. 2, Tabla 1"}
+  - {id: LIM-CO-8H,    contaminante: CO,    promedio: 8h,      limite: 5000,  fuente: "Res. 2254/2017, Art. 2, Tabla 1"}
+  - {id: LIM-CO-1H,    contaminante: CO,    promedio: 1h,      limite: 35000, fuente: "Res. 2254/2017, Art. 2, Tabla 1"}
+
+# Art. 2, Parágrafo 2 (textual): la concentración se evalúa por cada punto de monitoreo; el promedio
+# de diferentes puntos no es válido para evaluar el cumplimiento.
+criterios_evaluacion:
+  por_punto_de_monitoreo: true
+  fuente: "Res. 2254/2017, Art. 2, Parágrafo 2"
+
+# Art. 3, Tabla 2: niveles máximos permisibles desde 2030-01-01
+# (lo no incluido aquí conserva los valores de la Tabla 1)
+metas_2030:
+  - {id: META-PM10-ANUAL, contaminante: PM10,  promedio: anual, limite: 30, fuente: "Res. 2254/2017, Art. 3, Tabla 2"}
+  - {id: META-PM25-ANUAL, contaminante: PM2.5, promedio: anual, limite: 15, fuente: "Res. 2254/2017, Art. 3, Tabla 2"}
+  - {id: META-SO2-24H,    contaminante: SO2,   promedio: 24h,   limite: 20, fuente: "Res. 2254/2017, Art. 3, Tabla 2"}
+  - {id: META-NO2-ANUAL,  contaminante: NO2,   promedio: anual, limite: 40, fuente: "Res. 2254/2017, Art. 3, Tabla 2"}
+
+# Art. 10, Tabla 4: rangos (µg/m³) de los niveles de prevención, alerta y emergencia.
+# Cada rango es [mínimo, máximo]; `null` = sin tope superior. Los de PM2.5 aplican desde 2018-07-01.
+niveles_excepcionales:
+  - {contaminante: PM10,  promedio: 24h, prevencion: [155, 254],      alerta: [255, 354],      emergencia: [355, null]}
+  - {contaminante: PM2.5, promedio: 24h, prevencion: [38, 55],        alerta: [56, 150],       emergencia: [151, null]}
+  - {contaminante: O3,    promedio: 8h,  prevencion: [139, 167],      alerta: [168, 207],      emergencia: [208, null]}
+  - {contaminante: SO2,   promedio: 1h,  prevencion: [198, 486],      alerta: [487, 797],      emergencia: [798, null]}
+  - {contaminante: NO2,   promedio: 1h,  prevencion: [190, 677],      alerta: [678, 1221],     emergencia: [1222, null]}
+  - {contaminante: CO,    promedio: 8h,  prevencion: [10820, 14254],  alerta: [14255, 17688],  emergencia: [17689, null]}
+niveles_excepcionales_fuente: "Res. 2254/2017, Art. 10, Tabla 4"
+# Observación: el nivel de prevención de NO2 (desde 190) empieza por debajo de su límite horario
+# (200, Tabla 1). Así figura en el texto de la norma ("190-677"); no es error de transcripción.
+# El motor debe aplicar cada tabla por separado y no suponer que prevención > límite.
+
+# Art. 4, Tabla 3: contaminantes tóxicos (no medidos por la RMCAB en las estaciones de este proyecto)
+toxicos:
+  - {contaminante: Benceno,                       limite: 5,     promedio: anual}
+  - {contaminante: Plomo y compuestos,            limite: 0.5,   promedio: anual}
+  - {contaminante: Cadmio,                        limite: 0.005, promedio: anual}
+  - {contaminante: Mercurio inorgánico (vapores), limite: 1,     promedio: anual}
+  - {contaminante: Tolueno,                       limite: 260,   promedio: 1 semana}
+  - {contaminante: Tolueno,                       limite: 1000,  promedio: 30 minutos}
+  - {contaminante: Níquel y sus compuestos,       limite: 0.180, promedio: anual}
+  - {contaminante: Benzo(a)pireno (HAP),          limite: 0.001, promedio: anual}
+
+# Art. 19, Tabla 5: categorías del ICA, estado y efectos en salud (insumo de la sección de impacto)
+ica_categorias:
+  - rango: [0, 50]
+    color: Verde
+    estado: Buena
+    efectos: "La contaminación atmosférica supone un riesgo bajo para la salud."
+  - rango: [51, 100]
+    color: Amarillo
+    estado: Aceptable
+    efectos: "Posibles síntomas respiratorios en grupos poblacionales sensibles."
+  - rango: [101, 150]
+    color: Naranja
+    estado: Dañina a la salud de grupos sensibles
+    efectos: >
+      Los grupos poblaciones sensibles pueden presentar efectos sobre la salud.
+      1) Ozono troposférico: las personas con enfermedades pulmonares, niños, adultos mayores y las que
+      constantemente realizan actividad física al aire libre, deben reducir su exposición a los
+      contaminantes del aire. 2) Material particulado: las personas con enfermedad cardíaca o pulmonar,
+      los adultos mayores y los niños se consideran sensibles y por lo tanto en mayor riesgo.
+  - rango: [151, 200]
+    color: Rojo
+    estado: Dañina para la salud
+    efectos: "Todos los individuos pueden comenzar a experimentar efectos sobre la salud. Los grupos sensibles pueden experimentar efectos más graves para la salud."
+  - rango: [201, 300]
+    color: Púrpura
+    estado: Muy dañina para la salud
+    efectos: "Estado de alerta que significa que todos pueden experimentar efectos más graves para la salud."
+  - rango: [301, 500]
+    color: Marrón
+    estado: Peligroso
+    efectos: "Advertencia sanitaria. Toda la población puede presentar efectos adversos graves en la salud humana y están propensos a verse afectados por graves efectos sobre la salud."
+ica_categorias_fuente: "Res. 2254/2017, Art. 19, Tabla 5"
+
+# Art. 24: las autoridades ambientales deben publicar como mínimo informes mensuales, trimestrales y
+# anuales; si hay incumplimiento por fenómenos meteorológicos atípicos o transporte global de
+# contaminantes, el informe debe incluir la evaluación técnica de esas circunstancias.
+informes:
+  periodicidad_minima: [mensual, trimestral, anual]
+  incluir_evaluacion_de_eventos_atipicos: true
+  fuente: "Res. 2254/2017, Art. 24 y Parágrafo"
+
+# Condiciones de referencia y factores para convertir ppb/ppm de la RMCAB a µg/m³ (Fase 2).
+# La Resolución 2254 solo dice "a condiciones de referencia". Los valores numéricos salen del Informe
+# mensual RMCAB julio 2021 (SDA, Informe Técnico 03328, Anexo 6.3, Tabla 5), que los atribuye al
+# Protocolo para el Monitoreo y Seguimiento de la Calidad del Aire. El texto del Protocolo (Res.
+# 650/2010) no se leyó directamente; los factores se contrastan con la fórmula en las pruebas.
+condiciones_referencia:
+  temperatura_c: 25
+  presion_mmhg: 760
+  verificado: true
+  fuente: "SDA, Informe mensual RMCAB julio 2021, Anexo 6.3 (cita el Protocolo de Monitoreo)"
+
+# Multiplicar la concentración del gas por `factor` para obtener µg/m³.
+# Fórmula (SDA): factor = M * P / (R * T)  [M masa molar g/mol, P presión Pa, R constante, T kelvin]
+factores_conversion:
+  CO:  {de: ppm, factor: 1144.9, masa_molar: 28.0101}
+  SO2: {de: ppb, factor: 2.6186, masa_molar: 64.066}
+  NO2: {de: ppb, factor: 1.8804, masa_molar: 46.0055}
+  O3:  {de: ppb, factor: 1.9620, masa_molar: 47.9982}
+factores_conversion_fuente: "SDA, Informe mensual RMCAB julio 2021, Anexo 6.3, Tabla 5"
+
+# Representatividad temporal: porcentaje mínimo de datos válidos del periodo para que una estación
+# cuente en los cálculos. Según el informe de la SDA, lo fija el Protocolo de Monitoreo.
+datos_validos:
+  representatividad_temporal_minima_pct: 75
+  si_no_cumple: "los datos se muestran como indicativos y no entran en los cálculos ni en el análisis de media móvil"
+  fuente: "SDA, Informe mensual RMCAB julio 2021, Resumen y secciones 3.2-3.6"
+
+# Cómo se calculan y cuándo son válidos los promedios de corto plazo. PROVISIONAL: el informe de la SDA
+# solo confirma el 75 % mensual; el resto es un supuesto del proyecto, por analogía, hasta leer el
+# Protocolo (Res. 650/2010). El reporte debe declararlo en "Limitaciones".
+validez_promedios:
+  verificado: false
+  fuente: "supuesto del proyecto (analogía con el 75 % mensual del Protocolo)"
+  min_horas: {"1h": 1, "8h": 6, "24h": 18}       # 75 % de la ventana
+  ventanas:
+    "1h": "dato horario"
+    "8h": "media móvil retrospectiva de 8 horas, calculada en cada hora"
+    "24h": "día calendario (las horas que terminan de 01:00 a 24:00)"
+
+# Qué evalúa un informe mensual (observado en el informe de la SDA): solo los límites de corto plazo
+# (24 h, 8 h, 1 h). Los límites anuales no son evaluables con un solo mes.
+evaluacion_informe_mensual:
+  promedios_evaluables: ["24h", "8h", "1h"]
+  promedios_no_evaluables: ["anual"]
+
+pendientes:
+  - "Tabla 6 (puntos de corte del ICA, Art. 20): es imagen en la fuente; transcribir de otra copia (Diario Oficial) y contrastar."
+  - "Validez de un promedio diario y de una media móvil de 8 h, y si el de 24 h es día calendario o móvil: provisional en `validez_promedios` (18 de 24 y 6 de 8, día calendario, 8 h móvil); confirmar en el Protocolo."
+  - "Protocolo de Monitoreo (Res. 650/2010): leer el texto primario para confirmar condiciones de referencia y criterios de validez."
+  - "Índice IBOCA de Bogotá (Res. Conjunta 868/2021; condiciones favorable, moderada, regular...): rangos por verificar en fuente de la SDA."

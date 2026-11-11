@@ -1,0 +1,29 @@
+# --- Secretos: NUNCA se suben (copiar de los .env.example) ---
+.env
+.env.*
+!.env.example
+
+# --- Dependencias y compilados ---
+node_modules/
+dist/
+.next/
+out/
+coverage/
+*.tsbuildinfo
+next-env.d.ts
+
+# --- Generado al usar la aplicación (se regenera) ---
+backend-agente/storage/reports/*
+!backend-agente/storage/reports/.gitkeep
+
+# --- Sistema / editores ---
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.log
+*.tmp
+
+# Carpeta vieja vacía (del renombrado backend -> backend-agente)
+/backend/

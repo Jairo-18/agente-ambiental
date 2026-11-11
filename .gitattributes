@@ -1,0 +1,5 @@
+# Finales de línea LF en el repositorio (los contenedores son Linux); Windows los convierte al sacar.
+* text=auto eol=lf
+*.xlsx binary
+*.png binary
+*.docx binary

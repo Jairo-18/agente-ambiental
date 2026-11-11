@@ -1,0 +1,200 @@
+# Esquema del reporte mensual de calidad del aire (v1).
+# Solo datos: define qué secciones lleva el reporte, de dónde sale cada cifra y quién redacta cada parte.
+# Lo consumen la Fase 3 (hechos), la Fase 4 (generación del DOCX) y el verificador de cifras.
+#
+# Basado en la estructura del Informe mensual RMCAB julio 2021 (SDA, Informe Técnico 03328, procedimiento
+# PA10-PR04-M2), leído el 2026-11-04. Las secciones que no están en ese informe van marcadas `nuevo`.
+
+meta:
+  id: aire_mensual
+  version: 1
+  basado_en: "SDA, Informe mensual RMCAB julio 2021 (39 páginas)"
+  marco_normativo: "Res. 2254/2017, Art. 24 (informes mensuales, trimestrales y anuales)"
+  alcance_v1:
+    ciudad: Bogotá
+    periodo: un mes calendario
+    estaciones: las presentes en los datos de entrada (por punto de monitoreo, nunca promediadas)
+    contaminantes: [PM10, PM2.5, O3, SO2, NO2, CO]
+  datos_preliminares: true   # el reporte debe decirlo (la RMCAB publica datos sin validación final)
+
+# Quién produce cada parte. Regla del proyecto: ninguna cifra la escribe el modelo de lenguaje.
+origenes:
+  determinista: "código (pandas) o regla del motor; el texto sale de una plantilla Jinja2 con cifras de hechos.json"
+  llm_sobre_hechos: "el LLM redacta prosa solo a partir de hechos.json; el verificador comprueba cada cifra del texto"
+  fijo: "texto estático versionado en plantillas/"
+  entrada_manual: "información que no está en los datos (p. ej. observaciones de campo); si falta, la sección dice que no se aportó"
+
+# Qué se calcula por estación y contaminante: es el contrato de hechos.json (Fase 3).
+contrato_de_hechos:
+  clave: [estacion, contaminante, promedio]   # `promedio` en {24h, 8h, 1h}; ver evaluacion_informe_mensual en la base de conocimiento
+  campos:
+    n_validos: "horas con dato válido en el periodo"
+    n_esperados: "horas del periodo (744 en un mes de 31 días)"
+    representatividad_pct: "100 * n_validos / n_esperados"
+    evaluable: "representatividad_pct >= datos_validos.representatividad_temporal_minima_pct (75)"
+    media_mensual: "media de los datos válidos, en µg/m3 (gases convertidos con factores_conversion)"
+    maximo: {valor: "máximo del promedio de la clave", fecha_hora: "fin del periodo en que ocurrió"}
+    excedencias: "lista de {regla_id, fecha_hora, valor, limite}; una por cada promedio que supera el límite"
+    cumple: "true si evaluable y sin excedencias; null si no evaluable (nunca se declara cumplimiento sin datos)"
+    nivel_excepcional: "prevención/alerta/emergencia según Tabla 4 de la Res. 2254, o null"
+  reglas_de_oro:
+    - "Un promedio de estaciones no evalúa cumplimiento (Res. 2254, Art. 2, Par. 2)."
+    - "Estación con representatividad < 75 %: sus datos se muestran como indicativos y no entran en cálculos."
+    - "Un límite anual no se evalúa con un solo mes: el reporte lo dice como `no evaluable en informe mensual`."
+
+secciones:
+  - id: portada
+    titulo: Portada y ficha del reporte
+    origen: determinista
+    hechos: [periodo, fecha_generacion, estaciones_incluidas, version_esquema, version_base_conocimiento]
+    v1: true
+
+  - id: resumen
+    titulo: Resumen
+    origen: determinista      # el LLM lo redactó en una prueba y cometió comparaciones falsas; ver redaccion.py
+    hechos: [excedencias_por_contaminante, estaciones_no_evaluables, maximos_mensuales, niveles_excepcionales]
+    figuras: []
+    notas: >
+      El informe de la SDA abre con el conteo de excedencias por contaminante y la lista de estaciones con
+      representatividad menor al 75 %. Aquí el conteo sale del motor de reglas; el LLM solo lo redacta.
+    v1: true
+
+  - id: introduccion
+    titulo: Introducción
+    origen: fijo
+    contenido: [descripcion_red, contaminantes_criterio, tabla_estaciones_y_siglas]
+    hechos: [estaciones_incluidas]
+    tablas: [estaciones_y_siglas]
+    v1: true
+
+  - id: calidad_datos
+    titulo: Calidad y representatividad de los datos
+    origen: determinista
+    hechos: [representatividad_pct, evaluable, huecos_largos]
+    tablas: [representatividad_por_estacion_y_variable]
+    nuevo: true
+    notas: >
+      La SDA reparte estos datos dentro de cada contaminante. Aquí van juntos porque explican qué estaciones
+      pueden evaluarse y por qué. En los datos de octubre 2026, por ejemplo, el ozono de Kennedy tiene
+      417 de 744 horas (56 %): es indicativo, no evaluable.
+    v1: true
+
+  - id: meteorologia
+    titulo: Comportamiento de las variables meteorológicas
+    origen: determinista
+    subsecciones: [precipitacion, temperatura, viento]
+    hechos: [precipitacion_total_mm, dias_con_lluvia, temperatura_media_min_max, viento_medio_max]
+    tablas: [resumen_meteorologico_por_estacion]
+    figuras: []
+    notas: >
+      La SDA usa mapas de interpolación (Kriging) y rosas de viento. En v1 solo tablas por estación; los
+      mapas quedan fuera. Los nombres de las variables cambian entre estaciones (Vel Viento / Vel Viento 10M,
+      Temperatura / Temperatura 8M / 20M): usar `variables_canonicas`.
+    v1: true
+
+  - id: pm10
+    titulo: Material particulado PM10
+    origen: determinista
+    hechos_por: [PM10]
+    reglas: [LIM-PM10-24H]
+    tablas: [promedios_y_excedencias]
+    figuras: [serie_diaria_por_estacion_con_limite]
+    comentario_llm: true      # un párrafo de interpretación, con verificador
+    v1: true
+
+  - id: pm25
+    titulo: Material particulado PM2.5
+    origen: determinista
+    hechos_por: [PM2.5]
+    reglas: [LIM-PM25-24H]
+    tablas: [promedios_y_excedencias]
+    figuras: [serie_diaria_por_estacion_con_limite]
+    comentario_llm: true
+    v1: true
+
+  - id: gases
+    titulo: Ozono, dióxido de azufre, dióxido de nitrógeno y monóxido de carbono
+    origen: determinista
+    subsecciones: [o3, so2, no2, co]
+    hechos_por: [O3, SO2, NO2, CO]
+    reglas: [LIM-O3-8H, LIM-SO2-24H, LIM-SO2-1H, LIM-NO2-1H, LIM-CO-8H, LIM-CO-1H]
+    conversion_unidades: true   # ppb/ppm -> µg/m3 con factores_conversion antes de comparar
+    tablas: [promedios_y_excedencias_por_gas]
+    figuras: [promedios_mensuales_por_estacion_y_gas]
+    comentario_llm: true
+    v1: true
+
+  - id: niveles_excepcionales
+    titulo: Eventos de contaminación y niveles excepcionales
+    origen: determinista
+    reglas_desde: niveles_excepcionales      # Tabla 4, Res. 2254 Art. 10
+    hechos: [nivel_excepcional]
+    tablas: [episodios_prevencion_alerta_emergencia]
+    notas: >
+      La SDA describe eventos con IBOCA y datos de campo. En v1 se detectan con la Tabla 4 de la 2254
+      (prevención, alerta, emergencia) y se listan con fecha, estación y valor. Si no hay, la sección lo dice.
+      Ojo con NO2: su prevención (190) empieza por debajo de su límite (200).
+    v1: true
+
+  - id: impacto_salud
+    titulo: Impacto en la salud y recomendaciones
+    origen: llm_sobre_hechos
+    nuevo: true
+    hechos: [categoria_ica_por_estacion, efectos_en_salud]
+    fuente_de_texto: "conocimiento: ica_categorias (Res. 2254, Art. 19, Tabla 5)"
+    depende_de: ["Tabla 6 del ICA (puntos de corte) — pendiente de transcribir"]
+    notas: >
+      Los efectos se copian de la Tabla 5 de la norma; el LLM no inventa efectos ni recomendaciones.
+      Hasta tener la Tabla 6 no se calcula el ICA: la sección se limita a los niveles excepcionales y a las
+      excedencias, y avisa que el ICA no se calculó.
+    v1: parcial
+
+  - id: conclusiones
+    titulo: Conclusiones
+    origen: determinista      # igual que el resumen
+    hechos: [excedencias_por_contaminante, estaciones_no_evaluables, maximos_mensuales, niveles_excepcionales]
+    v1: true
+
+  - id: limitaciones
+    titulo: Limitaciones y declaraciones
+    origen: fijo
+    contenido:
+      - datos preliminares sin validación final de la SDA
+      - resultados a condiciones de referencia (25 °C, 760 mmHg)
+      - estaciones con representatividad menor al 75 % se muestran como indicativas
+      - límites anuales no evaluables con un mes
+      - el reporte lo generó un sistema automático; no reemplaza el informe oficial de la SDA
+    hechos: [fecha_descarga, fuente_datos]
+    v1: true
+
+  - id: anexos
+    titulo: Anexos
+    origen: determinista
+    contenido: [caracteristicas_de_las_estaciones, normativa_aplicada, factores_de_conversion, reglas_aplicadas]
+    fuentes: [estaciones_rmcab.yaml, aire_res2254_2017.yaml]
+    v1: true
+
+# Secciones del informe de la SDA que v1 no reproduce, y por qué.
+fuera_de_v1:
+  - {seccion: "Black Carbon (aethalómetros 370/880 nm) y quema de biomasa", motivo: "los datos traen eBC en 2 de las 3 estaciones, pero el cálculo de biomasa (Sandradewi) y los datos MODIS no están en el alcance", v2: true}
+  - {seccion: "IBOCA (Res. Conjunta 868/2021)", motivo: "rangos del índice pendientes de verificar en fuente oficial", v2: true}
+  - {seccion: "Correlación con capa de mezcla", motivo: "la altura de mezcla no está en los datos descargados", v2: false}
+  - {seccion: "Mapas de interpolación y rosas de viento", motivo: "requieren datos de toda la red y GIS; fuera de alcance", v2: false}
+  - {seccion: "Interferencias del monitoreo (chimeneas, quemas, obras)", motivo: "información de campo que no está en los datos; sería entrada manual", v2: true}
+  - {seccion: "Comparación con el mes anterior", motivo: "v1 recibe un solo mes; con dos meses se habilita", v2: true}
+
+# Variables meteorológicas con nombres distintos según la estación -> nombre canónico del reporte.
+variables_canonicas:
+  viento_velocidad:  {nombres_rmcab: ["Vel Viento", "Vel Viento 10M"], unidad: "m/s"}
+  viento_direccion:  {nombres_rmcab: ["Dir Viento", "Dir Viento 10M"], unidad: "Grados"}
+  temperatura:       {nombres_rmcab: ["Temperatura", "Temperatura 8M", "Temperatura 20M"], unidad: "°C", nota: "Guaymaral trae `Temperatura`, `Temperatura 8M` y `Temperatura 20M`; elegir una y documentarlo"}
+  humedad_relativa:  {nombres_rmcab: ["HR"], unidad: "%"}
+  precipitacion:     {nombres_rmcab: ["Precipitacion"], unidad: "mm"}
+  radiacion_solar:   {nombres_rmcab: ["Rad Solar"], unidad: "W/M2"}
+  presion:           {nombres_rmcab: ["Presion Baro"], unidad: "mmHg"}
+
+# Decisiones abiertas (no inventar: resolver con el profesor o con el Protocolo)
+pendientes:
+  - "Criterio de validez de un promedio diario y de una media móvil de 8 h (el informe de la SDA solo da el 75 % mensual)."
+  - "Qué temperatura usar en Guaymaral (hay tres: Temperatura, 8M y 20M)."
+  - "Tabla 6 del ICA, para activar la sección de impacto completa."

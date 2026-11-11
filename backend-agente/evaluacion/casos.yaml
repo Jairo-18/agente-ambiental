@@ -1,0 +1,147 @@
+# Casos de prueba del agente de reportes ciudadanos (Bogotá). Los corre evaluacion/evaluar.mjs contra la API en marcha.
+#
+# esperado.registra: true  = debe terminar con un reporte registrado (el script confirma la pregunta como lo haría el ciudadano)
+#                    false = NO debe registrar (es una pregunta) -> debe usar consultar_norma
+#                    "pregunta_direccion" = falta el lugar: no debe registrar y debe preguntar dónde
+# tipo / prioridad / emergencia: lo que dan las reglas del YAML para ese texto (criterio del proyecto).
+# voz: true = el mensaje se sintetiza con Kokoro, se transcribe con Whisper y se envía lo transcrito (cadena de voz completa).
+
+casos:
+  # --- residuos ---
+  - id: R1
+    mensaje: Botaron un montón de escombros y un colchón viejo en el andén de la carrera 50 con calle 3, en Puente Aranda.
+    esperado: { registra: true, tipo: residuos, prioridad: baja, emergencia: false }
+  - id: R2
+    mensaje: En la esquina de la calle 80 con carrera 110 en Engativá siempre dejan bolsas de basura regadas, ya hay ratas, esto pasa todos los días.
+    esperado: { registra: true, tipo: residuos, prioridad: media, emergencia: false }
+    voz: true
+  - id: R3
+    mensaje: Un camión está botando escombros ahora mismo en el lote de la avenida Boyacá con calle 13, en Kennedy.
+    esperado: { registra: true, tipo: residuos, prioridad: media, emergencia: false }
+  - id: R4
+    mensaje: Frente al colegio de la calle 56 sur con carrera 19 en Tunjuelito hay un botadero de basura y llantas.
+    esperado: { registra: true, tipo: residuos, prioridad: media, emergencia: false }
+
+  # --- arbolado ---
+  - id: A1
+    mensaje: Están talando un eucalipto grande con motosierra en el parque de la carrera 7 con calle 120, en Usaquén, ahora mismo.
+    esperado: { registra: true, tipo: arbolado, prioridad: media, emergencia: false }
+    voz: true
+  - id: A2
+    mensaje: Hay un árbol inclinado que se va a caer sobre los cables en la carrera 68 con calle 26, en Teusaquillo.
+    esperado: { registra: true, tipo: arbolado, prioridad: alta, emergencia: true }
+  - id: A3
+    mensaje: La semana pasada podaron todos los árboles del separador de la calle 170 con autopista norte, en Usaquén, y los dejaron pelados.
+    esperado: { registra: true, tipo: arbolado, prioridad: media, emergencia: false }
+  - id: A4
+    mensaje: Talaron tres árboles en el jardín infantil del barrio Las Ferias, calle 72 con carrera 68, Engativá.
+    esperado: { registra: true, tipo: arbolado, prioridad: media, emergencia: false }
+
+  # --- quema ---
+  - id: Q1
+    mensaje: Están quemando basura y llantas en el lote de la calle 38 sur con carrera 80, en Kennedy. Hay llamas y mucho humo, está pasando ahora.
+    esperado: { registra: true, tipo: quema, prioridad: alta, emergencia: true }
+    voz: true
+  - id: Q2
+    mensaje: Anoche alguien quemó cables en el potrero de la carrera 1 con calle 48 sur en Usme, todavía huele a quemado.
+    esperado: { registra: true, tipo: quema, prioridad: media, emergencia: false }
+  - id: Q3
+    mensaje: Hay un incendio en los cerros orientales arriba de la calle 72, en Chapinero, se ven las llamas desde la carrera séptima.
+    esperado: { registra: true, tipo: quema, prioridad: alta, emergencia: true }
+  - id: Q4
+    mensaje: Los vecinos de la calle 63 sur con carrera 18 en Ciudad Bolívar queman basura cada fin de semana en el andén.
+    esperado: { registra: true, tipo: quema, prioridad: alta, emergencia: false }
+
+  # --- ruido ---
+  - id: N1
+    mensaje: La discoteca de la calle 72 con carrera 10, en Chapinero, pone música a todo volumen todas las noches y no deja dormir.
+    esperado: { registra: true, tipo: ruido, prioridad: media, emergencia: false }
+    voz: true
+  - id: N2
+    mensaje: Un taller de latonería en la calle 13 con carrera 68 en Puente Aranda hace ruido con compresores durante el día.
+    esperado: { registra: true, tipo: ruido, prioridad: baja, emergencia: false }
+  - id: N3
+    mensaje: Los vecinos del apartamento de arriba, en la carrera 15 con calle 140 en Usaquén, tienen una fiesta con parlantes ahora mismo y son las 2 de la mañana.
+    esperado: { registra: true, tipo: ruido, prioridad: media, emergencia: false }
+  - id: N4
+    mensaje: Al lado del hospital de la calle 1 con carrera 10, en Santa Fe, hay un bar con música muy alta.
+    esperado: { registra: true, tipo: ruido, prioridad: media, emergencia: false }
+
+  # --- aire ---
+  - id: E1
+    mensaje: La fábrica de la carrera 30 con calle 17 en Puente Aranda bota humo negro por la chimenea todas las mañanas y huele horrible.
+    esperado: { registra: true, tipo: aire, prioridad: media, emergencia: false }
+  - id: E2
+    mensaje: En la calle 6 con carrera 69 en Kennedy hay un olor fétido muy fuerte desde ayer, parece de una planta de químicos.
+    esperado: { registra: true, tipo: aire, prioridad: alta, emergencia: true }
+    voz: true
+
+  # --- agua ---
+  - id: W1
+    mensaje: Están vertiendo aguas negras al humedal Juan Amarillo por la calle 90 con carrera 103 en Suba, hay espuma y peces muertos.
+    esperado: { registra: true, tipo: agua, prioridad: alta, emergencia: false }
+  - id: W2
+    mensaje: En la quebrada La Vieja, a la altura de la calle 71 con carrera 4 en Chapinero, hay basura y escombros dentro del agua.
+    esperado: { registra: true, tipo: agua, prioridad: media, emergencia: false }
+  - id: W3
+    mensaje: El río Tunjuelo, en la avenida Boyacá con calle 60 sur, en Ciudad Bolívar, tiene una mancha de aceite ahora mismo.
+    esperado: { registra: true, tipo: agua, prioridad: media, emergencia: false }
+  - id: W4
+    mensaje: Una empresa lava camiones en el canal del Fucha, en la carrera 50 con calle 8 sur, Puente Aranda, y el agua sale de colores.
+    esperado: { registra: true, tipo: agua, prioridad: media, emergencia: false }
+
+  # --- preguntas: NO deben registrar ---
+  - id: P1
+    mensaje: ¿Dónde denuncio que están talando un árbol?
+    esperado: { registra: false }
+  - id: P2
+    mensaje: ¿Cuánto ruido se permite de noche en una zona residencial?
+    esperado: { registra: false }
+    voz: true
+  - id: P3
+    mensaje: ¿Es prohibido quemar basura en Bogotá?
+    esperado: { registra: false }
+  - id: P4
+    mensaje: ¿A qué número llamo para que recojan un colchón viejo?
+    esperado: { registra: false }
+
+  # --- incompletos: debe preguntar el lugar ---
+  - id: I1
+    mensaje: Están quemando basura y hay mucho humo.
+    esperado: { registra: pregunta_direccion }
+  - id: I2
+    mensaje: Mis vecinos ponen la música durísimo todas las noches.
+    esperado: { registra: pregunta_direccion }
+  - id: I3
+    mensaje: Alguien botó escombros en la calle.
+    esperado: { registra: pregunta_direccion }
+  - id: I4
+    mensaje: Talaron un árbol sin permiso.
+    esperado: { registra: pregunta_direccion }
+
+  # --- generalización: escritos después de la segunda corrida y NO usados para ajustar reglas ni prompts ---
+  - id: G1
+    mensaje: Un vecino de la calle 45 con carrera 24, Teusaquillo, tiene un perro ladrando y un equipo de sonido a todo volumen desde las 11 de la noche.
+    esperado: { registra: true, tipo: ruido, prioridad: media, emergencia: false }
+  - id: G2
+    mensaje: En el humedal La Conejera, entrando por la calle 152 en Suba, alguien dejó bultos de escombros a la orilla.
+    esperado: { registra: true, tipo: agua, prioridad: media, emergencia: false }
+  - id: G3
+    mensaje: Ahorita están podando los árboles de la carrera 13 con calle 63, Chapinero, y uno quedó colgando sobre la vía.
+    esperado: { registra: true, tipo: arbolado, prioridad: media, emergencia: false }
+    voz: true
+  - id: G4
+    mensaje: Hay un olor a gas muy fuerte en toda la cuadra de la calle 2 sur con carrera 30, en Antonio Nariño.
+    esperado: { registra: true, tipo: aire, prioridad: alta, emergencia: true }
+  - id: G5
+    mensaje: En el parque de la calle 145 con carrera 58, Suba, dejan la basura regada cada semana después del mercado.
+    esperado: { registra: true, tipo: residuos, prioridad: media, emergencia: false }
+  - id: G6
+    mensaje: ¿Qué entidad atiende el ruido de una fábrica?
+    esperado: { registra: false }
+  - id: G7
+    mensaje: Están quemando pasto en el potrero de la vereda, al lado de una casa.
+    esperado: { registra: pregunta_direccion }
+  - id: G8
+    mensaje: Una ladrillera en Usme, por la vía al Llano kilómetro 3, bota humo negro todo el día.
+    esperado: { registra: true, tipo: aire, prioridad: baja, emergencia: false }

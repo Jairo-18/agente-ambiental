@@ -1,0 +1,232 @@
+# Base de conocimiento: REPORTES CIUDADANOS AMBIENTALES en Bogotá D.C.
+#
+# Qué es: tipos de reporte, a qué entidad le toca cada uno, por qué canal oficial se radica, qué norma aplica y las reglas
+# (del proyecto) para clasificar y priorizar. El agente la usa de dos formas:
+#   1. las reglas de clasificación y prioridad las aplica el CÓDIGO (no el modelo): reportes-ciudadanos/clasificacion.service.ts
+#   2. el texto (normas, rutas, canales) se parte en fragmentos y va a pgvector para la herramienta consultar_norma.
+#
+# Regla del proyecto: NADA SE INVENTA. Cada dato lleva su fuente y la fecha de consulta.
+#   verificado: true  = transcrito de la fuente oficial (gestor normativo / portal del Distrito o de la SDA)
+#   verificado: false = resumen de una fuente secundaria o criterio del proyecto: hay que confirmarlo antes de usarlo en serio
+# Cambiar algo de aquí: en este archivo (+ su prueba), nunca en el código.
+
+version: 1
+consultado: "2026-11-10"
+territorio: Bogotá D.C.
+autoridad_ambiental: Secretaría Distrital de Ambiente (SDA)
+
+aviso_radicado: >-
+  El radicado que entrega este agente (formato RA-AAAA-NNNNN) es interno de este prototipo académico: sirve para hacer
+  seguimiento aquí, pero NO es un radicado oficial. Para que la autoridad actúe, el ciudadano debe poner la queja también en
+  uno de los canales oficiales que el agente le indica.
+
+# --- Canales oficiales (para decirle al ciudadano dónde radicar) ---------------------------------------------------------
+canales:
+  EMERGENCIAS-123:
+    nombre: Línea de emergencias 123
+    corto: la línea 123
+    detalle: Para lo que está pasando y pone en riesgo a personas (fuego, árbol a punto de caer, fuga de gas o químicos) y para conflictos de convivencia como ruido de vecinos o fiestas (Policía). También recibe reportes de tala ilegal en curso.
+    fuente: bogota.gov.co, "¿Dónde puedo reportar la tala ilegal de árboles en Bogotá?" (2022-07-18) y "Reporta exceso de ruido…" (2026-04-15)
+    verificado: true
+  SDA-ATENCION:
+    nombre: Atención al ciudadano de la Secretaría Distrital de Ambiente
+    corto: la Secretaría de Ambiente, 601 377 8899 o atencionalciudadano@ambientebogota.gov.co
+    detalle: "PBX +57 (601) 3778899 (lunes a viernes, 8:00 a. m. a 5:00 p. m.); correo atencionalciudadano@ambientebogota.gov.co; ventanilla virtual https://forest.ambientebogota.gov.co/ventanillaVirtual/app; sede principal Av. Caracas # 54-38 y puntos en SuperCADE."
+    fuente: ambientebogota.gov.co, Transparencia > Canales de atención y pida una cita
+    verificado: true
+  SDA-RUIDO:
+    nombre: SDA, área de ruido
+    corto: la Secretaría de Ambiente, área de ruido, 601 377 8936
+    detalle: "+57 (601) 3778936. La SDA evalúa el ruido de establecimientos de comercio, servicios e industria."
+    fuente: ambientebogota.gov.co, directorio por área; bogota.gov.co (2026-04-15)
+    verificado: true
+  SDA-FLORA:
+    nombre: SDA, flora y silvicultura urbana
+    corto: la Secretaría de Ambiente, flora y silvicultura, 601 377 8917
+    detalle: "+57 (601) 3778917. La SDA es la que autoriza talas y podas en Bogotá; nadie puede intervenir un árbol sin permiso previo, ni siquiera en predio privado."
+    fuente: ambientebogota.gov.co, directorio por área; bogota.gov.co (2022-07-18)
+    verificado: true
+  SDA-RESIDUOS:
+    nombre: SDA, residuos (peligrosos, RAEE, llantas)
+    corto: la Secretaría de Ambiente, residuos, 601 377 8875
+    detalle: "+57 (601) 3778875 (residuos, RAEE, Ecolecta y llantas)."
+    fuente: ambientebogota.gov.co, directorio por área
+    verificado: true
+  SDA-FAUNA:
+    nombre: SDA, fauna silvestre
+    corto: la Secretaría de Ambiente, fauna, 601 377 8854
+    detalle: "+57 (601) 3778854."
+    fuente: ambientebogota.gov.co, directorio por área
+    verificado: true
+  LINEA-110:
+    nombre: Línea 110 del servicio de aseo (UAESP y operadores)
+    corto: la línea 110 del servicio de aseo
+    detalle: Para puntos críticos de basura, escombros y recolección de residuos voluminosos (colchones, muebles).
+    fuente: bogota.gov.co, "Así puedes reportar un punto crítico con acumulación de basuras en Bogotá" y "Conoce la Línea 110…"
+    verificado: true
+  LINEA-195:
+    nombre: Línea 195 (opción 8 para arrojo ilegal de basuras o escombros)
+    corto: la línea 195, opción 8
+    detalle: Entrega un número de radicado para seguimiento.
+    fuente: bogota.gov.co, "Así puedes reportar un punto crítico…"; semana.com (canales para denunciar ruido)
+    verificado: true
+  BOGOTA-TE-ESCUCHA:
+    nombre: Bogotá Te Escucha (Sistema Distrital de Quejas y Soluciones)
+    corto: Bogotá Te Escucha, en bogota.gov.co/sdqs
+    detalle: Plataforma para radicar quejas, reclamos y denuncias ante cualquier entidad del Distrito, http://www.bogota.gov.co/sdqs
+    fuente: bogota.gov.co
+    verificado: true
+
+# --- Tipos de reporte -------------------------------------------------------------------------------------------------
+# palabras: pistas para la clasificación por reglas (sin tildes ni mayúsculas: el código normaliza el texto); una frase de varias
+#   palabras vale 2 y una de palabras_fuertes vale 3.
+# prioridad_base: punto de partida de la escala de prioridad (criterio del proyecto, ver reglas_prioridad).
+tipos:
+  residuos:
+    nombre: Residuos, basuras y escombros
+    palabras: [basura, basuras, residuo, residuos, escombro, escombros, desecho, desechos, botadero, bolsas, colchon, colchones, muebles viejos, llanta, llantas, reciclaje, punto critico, arrojan, botan, regado, regada, lixiviado, ratas, moscas]
+    entidad: UAESP y el operador de aseo de la zona (residuos peligrosos, RAEE y llantas, SDA)
+    canales: [LINEA-110, LINEA-195, SDA-RESIDUOS]
+    normas: [LEY1801-ART111]
+    datos_a_pedir: [dirección o referencia exacta, qué hay (basura doméstica, escombros, voluminosos, peligrosos), desde cuándo está ahí]
+    prioridad_base: 1
+  arbolado:
+    nombre: Tala, poda o árbol en riesgo
+    palabras: [tala, talando, talaron, arbol, arboles, motosierra, poda, podando, cortando un arbol, cortaron, tumbaron, rama, ramas, tronco, se va a caer, inclinado]
+    entidad: SDA (permisos de tala y poda); Bomberos si el árbol está en riesgo de caer
+    canales: [EMERGENCIAS-123, SDA-FLORA, SDA-ATENCION]
+    normas: [SDA-TALA-PERMISO]
+    datos_a_pedir: [dirección o referencia, si están talando en este momento, cuántos árboles, si hay riesgo de que caiga sobre personas, vías o cables]
+    prioridad_base: 2
+  quema:
+    nombre: Quema o incendio
+    palabras: [quema, quemas, queman, quemando, quemaron, quemo, quemado, quemada, fuego, incendio, llamas, humo, humareda, cenizas, quemar basura, queman basura, quemando basura, quemaron basura, quema de basura, queman llantas, fogata, ardiendo]
+    entidad: Bomberos (123) si hay fuego activo; SDA para quemas a cielo abierto
+    canales: [EMERGENCIAS-123, SDA-ATENCION]
+    normas: [DEC1076-QUEMAS]
+    datos_a_pedir: [dirección o referencia, si el fuego sigue activo, qué se está quemando, si hay personas o viviendas cerca]
+    prioridad_base: 3
+  ruido:
+    nombre: Ruido
+    palabras: [ruido, ruidos, bulla, musica, parlante, parlantes, fiesta, fiestas, volumen, discoteca, bar, gallera, taller, maquinaria, pito, pitos, alarma, ensordecedor, no deja dormir, sonido]
+    entidad: SDA si viene de un establecimiento de comercio, servicios o industria; Policía (123) si son vecinos o una fiesta; Secretaría Distrital de Salud si es ruido dentro de una edificación
+    canales: [SDA-RUIDO, EMERGENCIAS-123, SDA-ATENCION]
+    normas: [RUIDO-RES627-HORARIO, RUIDO-RES627-TABLA, LEY1801-ART33, RUTA-RUIDO]
+    datos_a_pedir: [dirección o referencia, si viene de un local, una fábrica o de vecinos, a qué hora pasa y si es frecuente]
+    prioridad_base: 1
+  aire:
+    nombre: Contaminación del aire u olores
+    palabras: [humo negro, chimenea, olor, olores, mal olor, fetido, gases, emisiones, polvo, smog, contaminacion del aire, respirar, tos, fabrica que bota humo]
+    entidad: SDA (calidad del aire y emisiones de fuentes fijas)
+    canales: [SDA-ATENCION]
+    normas: []
+    datos_a_pedir: [dirección o referencia de la fuente, qué se ve o se huele, a qué horas, si afecta la salud de alguien]
+    prioridad_base: 1
+  agua:
+    nombre: Fuentes hídricas (ríos, quebradas, humedales, canales)
+    palabras: [rio, quebrada, humedal, canal, vertimiento, vertiendo, aguas negras, agua contaminada, espuma, peces muertos, aceite en el agua, ronda, cuerpo de agua, laguna, alcantarilla rebosada]
+    # Si se nombra un cuerpo de agua, lo afectado es la fuente hídrica aunque haya basura o escombros: estas pesan 3.
+    palabras_fuertes: [rio, quebrada, humedal, canal, laguna, ronda hidrica, cuerpo de agua]
+    entidad: SDA (cuerpos de agua y humedales del perímetro urbano)
+    canales: [SDA-ATENCION, BOGOTA-TE-ESCUCHA]
+    normas: [LEY1801-ART100]
+    datos_a_pedir: [nombre del río, quebrada o humedal y punto de referencia, qué se ve (color, olor, espuma, peces muertos), si está pasando ahora]
+    prioridad_base: 2
+  otro:
+    nombre: Otro asunto ambiental
+    palabras: []
+    entidad: SDA, atención al ciudadano (para que lo remitan a quien corresponda)
+    canales: [SDA-ATENCION, BOGOTA-TE-ESCUCHA]
+    normas: []
+    datos_a_pedir: [qué pasa, dónde, desde cuándo]
+    prioridad_base: 1
+
+# --- Prioridad (CRITERIO DEL PROYECTO, no es norma) -------------------------------------------------------------------
+# puntaje = prioridad_base del tipo + modificadores que se cumplan. alta >= 4, media >= 2, baja < 2.
+# "peligro" además marca el reporte como EMERGENCIA: el agente le dice al ciudadano que llame ya al 123.
+reglas_prioridad:
+  verificado: false
+  fuente: Criterio del proyecto (curso Sistemas Expertos); no proviene de un protocolo oficial de la SDA
+  umbrales: { alta: 4, media: 2 }
+  modificadores:
+    peligro:
+      puntos: 3
+      emergencia: true
+      palabras: [llamas, incendio, se esta quemando, fuego activo, se va a caer, a punto de caer, cayo sobre, sobre los cables, cables electricos, olor a gas, fuga de gas, quimico, quimicos, combustible, gasolina, explosion, herido, heridos, atrapado]
+    en_curso:
+      puntos: 1
+      descripcion: >-
+        Está pasando ahora mismo. Por el agente solo cuenta si el texto lo dice (estas palabras o un presente continuo como
+        "están quemando"): así no depende de lo que suponga el modelo. En el formulario lo marca la persona.
+      palabras: [ahora, ahorita, ahora mismo, en este momento, en este instante, ya mismo, en vivo, todavia, sigue, siguen]
+    receptor_sensible:
+      puntos: 1
+      palabras: [hospital, clinica, colegio, escuela, jardin infantil, guarderia, hogar geriatrico, ancianato, ninos, humedal, reserva]
+    recurrente:
+      puntos: 1
+      palabras: [todos los dias, todas las noches, todas las mananas, todas las tardes, cada dia, cada noche, a diario, siempre, cada semana, cada fin de semana, hace meses, hace semanas, otra vez, de nuevo, varias veces]
+    nocturno_ruido:
+      puntos: 1
+      descripcion: Ruido en horario nocturno según la Res. 627/2006 (de las 21:01 a las 7:00)
+      palabras: [noche, madrugada, de noche, toda la noche, no deja dormir, 2 de la manana, 3 de la manana]
+
+# --- Normas y rutas (se indexan en pgvector) --------------------------------------------------------------------------
+normas:
+  - clave: RUIDO-RES627-HORARIO
+    titulo: Horario diurno y nocturno para ruido (Res. 627 de 2006)
+    texto: "La Resolución 0627 de 2006 del Ministerio de Ambiente, Vivienda y Desarrollo Territorial define el horario diurno de las 7:01 a las 21:00 horas y el nocturno de las 21:01 a las 7:00 horas."
+    fuente: Res. 0627/2006 MAVDT, Art. 2 (normas.cra.gov.co, gestor normativo)
+    verificado: true
+  - clave: RUIDO-RES627-SECTOR-A
+    titulo: Ruido máximo en Sector A, tranquilidad y silencio
+    texto: "Sector A (tranquilidad y silencio: hospitales, bibliotecas, guarderías, sanatorios, hogares geriátricos): 55 dB(A) de día y 50 dB(A) de noche."
+    fuente: Res. 0627/2006 MAVDT, Art. 9, Tabla 1
+    verificado: true
+  - clave: RUIDO-RES627-SECTOR-B
+    titulo: Ruido máximo en Sector B, residencial
+    texto: "Sector B (tranquilidad y ruido moderado: zonas residenciales o de desarrollo habitacional, hotelería y hospedajes; universidades, colegios, escuelas y centros de estudio; parques urbanos que no son mecánicos): 65 dB(A) de día y 55 dB(A) de noche."
+    fuente: Res. 0627/2006 MAVDT, Art. 9, Tabla 1
+    verificado: true
+  - clave: RUIDO-RES627-SECTOR-C
+    titulo: Ruido máximo en Sector C, ruido intermedio restringido
+    texto: "Sector C (ruido intermedio restringido): zonas industriales, portuarias, parques industriales y zonas francas 75 dB(A) de día y 75 dB(A) de noche; zonas comerciales 70 dB(A) de día y 60 dB(A) de noche; zonas de oficinas e institucionales 65 dB(A) de día y 55 dB(A) de noche; parques mecánicos y espectáculos públicos al aire libre 80 dB(A) de día y 75 dB(A) de noche."
+    fuente: Res. 0627/2006 MAVDT, Art. 9, Tabla 1
+    verificado: true
+  - clave: RUIDO-RES627-SECTOR-D
+    titulo: Ruido máximo en Sector D, suburbano o rural
+    texto: "Sector D (zona suburbana o rural de tranquilidad y ruido moderado: residencial suburbana, rural habitada destinada a explotación agropecuaria, parques naturales y reservas naturales): 55 dB(A) de día y 50 dB(A) de noche."
+    fuente: Res. 0627/2006 MAVDT, Art. 9, Tabla 1
+    verificado: true
+  - clave: RUTA-RUIDO
+    titulo: Quién atiende cada caso de ruido en Bogotá
+    texto: "En Bogotá la Secretaría Distrital de Ambiente evalúa el ruido de establecimientos de comercio, servicios e industria que usan fuentes sonoras; la Policía atiende por la línea 123 los conflictos entre vecinos, como fiestas o música alta, según la Ley 1801 de 2016; la Secretaría Distrital de Salud vigila el ruido dentro de las edificaciones."
+    fuente: bogota.gov.co, "Reporta exceso de ruido y afectación en salud auditiva en Bogotá" (2026-04-15)
+    verificado: true
+  - clave: LEY1801-ART33
+    titulo: Ruido entre vecinos en el Código de Policía (Ley 1801, art. 33)
+    texto: "El artículo 33 de la Ley 1801 de 2016 (Código Nacional de Seguridad y Convivencia Ciudadana) considera contrario a la convivencia perturbar el sosiego de los vecinos con sonidos o ruidos en actividades, fiestas, reuniones o eventos similares, o con aparatos o maquinaria que produzcan emisión sonora o vibraciones. La medida correctiva es multa general tipo 4 y la disolución de la reunión o actividad."
+    fuente: Ley 1801/2016, art. 33 y parágrafo 1 (resumen de leyes.co; confirmar en el texto oficial de Función Pública o la Secretaría del Senado)
+    verificado: false
+  - clave: LEY1801-ART100
+    titulo: Comportamientos contrarios a la preservación del agua (Ley 1801, art. 100)
+    texto: "El artículo 100 de la Ley 1801 de 2016 prohíbe, entre otros, arrojar sustancias contaminantes, residuos o desechos a los cuerpos de agua; deteriorar o alterar los cuerpos de agua y sus zonas de ronda hídrica; captar agua de fuentes hídricas sin autorización; lavar bienes muebles en ríos, canales y quebradas, y actuar contra la conservación de los humedales. Las medidas incluyen amonestación, multa general tipo 4 y suspensión temporal de la actividad."
+    fuente: Ley 1801/2016, art. 100 (resumen de leyes.co; confirmar en el texto oficial)
+    verificado: false
+  - clave: LEY1801-ART111
+    titulo: Comportamientos contrarios a la limpieza y recolección de residuos (Ley 1801, art. 111)
+    texto: "El artículo 111 de la Ley 1801 de 2016 considera contrario a la convivencia, entre otros: sacar la basura fuera del horario autorizado o en un sitio distinto, arrojar residuos en sitios públicos no autorizados, arrojar basura, llantas o escombros en el espacio público, transportar escombros en medios no aptos y arrojar objetos a las redes de alcantarillado o aguas lluvias. Los primeros numerales tienen medidas pedagógicas o amonestación; los demás, multas generales tipo 2, 3 o 4 según el caso."
+    fuente: Ley 1801/2016, art. 111 (resumen de leyes.co; confirmar en el texto oficial)
+    verificado: false
+  - clave: DEC1076-QUEMAS
+    titulo: Prohibición de quemas abiertas en zona urbana (Decreto 1076 de 2015)
+    texto: "El Decreto 1076 de 2015 (Decreto Único Reglamentario del sector ambiente) prohíbe la práctica de quemas abiertas dentro del perímetro urbano de ciudades, poblados y asentamientos humanos, y prohíbe a establecimientos comerciales, industriales y hospitalarios hacer quemas abiertas para tratar sus residuos sólidos. Si hay fuego activo, primero se llama al 123."
+    fuente: Decreto 1076/2015 (compila el Decreto 948 de 1995); resumen de fuentes secundarias, confirmar el artículo exacto en el texto oficial
+    verificado: false
+  - clave: SDA-TALA-PERMISO
+    titulo: Permisos de tala y poda en Bogotá
+    texto: "En Bogotá la Secretaría Distrital de Ambiente es la que autoriza las talas y podas; nadie puede intervenir un árbol sin permiso previo, ni siquiera en un predio privado. El Cuerpo Oficial de Bomberos es el único autorizado para talar y trozar árboles en riesgo de caer. Una tala ilegal en curso se reporta a la línea 123 dando todos los datos del lugar."
+    fuente: bogota.gov.co, "¿Dónde puedo reportar la tala ilegal de árboles en Bogotá?" (2022-07-18)
+    verificado: true
+
+# Las 20 localidades de Bogotá (para validar lo que dice el ciudadano).
+localidades: [Usaquén, Chapinero, Santa Fe, San Cristóbal, Usme, Tunjuelito, Bosa, Kennedy, Fontibón, Engativá, Suba, Barrios Unidos, Teusaquillo, Los Mártires, Antonio Nariño, Puente Aranda, La Candelaria, Rafael Uribe Uribe, Ciudad Bolívar, Sumapaz]

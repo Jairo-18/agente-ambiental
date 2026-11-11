@@ -1,0 +1,36 @@
+# Estaciones de la RMCAB usadas en el proyecto (octubre 2026: Guaymaral, Kennedy, Puente Aranda).
+# Fuente: SDA, Informe mensual RMCAB julio 2021, Anexo 6.1, Tabla 2.
+# ATENCIÓN: es una tabla de 2021. Antes de citarla en un reporte de 2026, confirmar en el portal de la
+# RMCAB (panel de información de la estación) que el tipo de zona y la ubicación no cambiaron.
+
+fuente: "SDA, Informe mensual RMCAB julio 2021, Anexo 6.1, Tabla 2"
+vigencia_a_verificar: true
+
+estaciones:
+  Guaymaral:
+    sigla: GYR
+    latitud: "4°47'1.52\"N"
+    longitud: "74°2'39.06\"W"
+    altitud_m: 2580
+    localidad: Suba
+    tipo_zona: Suburbana
+    tipo_estacion: De fondo
+    direccion: "Autopista Norte # 205-59"
+  Kennedy:
+    sigla: KEN
+    latitud: "4°37'30.18\"N"
+    longitud: "74°9'40.80\"W"
+    altitud_m: 2580
+    localidad: Kennedy
+    tipo_zona: Urbana
+    tipo_estacion: De fondo
+    direccion: "Carrera 80 # 40-55 sur"
+  Puente Aranda:
+    sigla: PTE
+    latitud: "4°37'54.36\"N"
+    longitud: "74°7'2.94\"W"
+    altitud_m: 2590
+    localidad: Puente Aranda
+    tipo_zona: Urbana
+    tipo_estacion: Industrial
+    direccion: "Calle 10 # 65-28"

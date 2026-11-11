@@ -1,0 +1,798 @@
+{
+  "advertencias": [
+    {
+      "cantidad": null,
+      "codigo": "DATOS_PRELIMINARES",
+      "estacion": null,
+      "mensaje": "Los datos de la RMCAB son preliminares: no tienen validación final de la SDA.",
+      "severidad": "info",
+      "variable": null
+    },
+    {
+      "cantidad": 51,
+      "codigo": "HUECO_LARGO",
+      "estacion": "Guaymaral",
+      "mensaje": "Guaymaral / PM2.5: 51 horas seguidas sin dato.",
+      "severidad": "aviso",
+      "variable": "PM2.5"
+    },
+    {
+      "cantidad": 32,
+      "codigo": "HUECO_LARGO",
+      "estacion": "Guaymaral",
+      "mensaje": "Guaymaral / SO2: 32 horas seguidas sin dato.",
+      "severidad": "aviso",
+      "variable": "SO2"
+    },
+    {
+      "cantidad": 2,
+      "codigo": "ATIPICOS",
+      "estacion": "Guaymaral",
+      "mensaje": "Guaymaral / SO2: 2 valores muy alejados de la mediana (z modificado > 15); se conservan, pueden ser episodios reales.",
+      "severidad": "info",
+      "variable": "SO2"
+    },
+    {
+      "cantidad": 0,
+      "codigo": "SERIE_VACIA",
+      "estacion": "Kennedy",
+      "mensaje": "Kennedy / CO2: sin ningún dato válido en 2026-10.",
+      "severidad": "aviso",
+      "variable": "CO2"
+    },
+    {
+      "cantidad": 417,
+      "codigo": "COBERTURA_BAJA",
+      "estacion": "Kennedy",
+      "mensaje": "Kennedy / OZONO: 417 de 744 horas válidas (56 %), menos del 75 % mínimo; los datos son indicativos.",
+      "severidad": "aviso",
+      "variable": "OZONO"
+    },
+    {
+      "cantidad": 167,
+      "codigo": "HUECO_LARGO",
+      "estacion": "Kennedy",
+      "mensaje": "Kennedy / OZONO: 167 horas seguidas sin dato.",
+      "severidad": "aviso",
+      "variable": "OZONO"
+    },
+    {
+      "cantidad": 0,
+      "codigo": "SERIE_VACIA",
+      "estacion": "Kennedy",
+      "mensaje": "Kennedy / PM2.5 Flow: sin ningún dato válido en 2026-10.",
+      "severidad": "aviso",
+      "variable": "PM2.5 Flow"
+    },
+    {
+      "cantidad": 0,
+      "codigo": "SERIE_VACIA",
+      "estacion": "Puente Aranda",
+      "mensaje": "Puente Aranda / PM10 Flow: sin ningún dato válido en 2026-10.",
+      "severidad": "aviso",
+      "variable": "PM10 Flow"
+    },
+    {
+      "cantidad": 0,
+      "codigo": "SERIE_VACIA",
+      "estacion": "Puente Aranda",
+      "mensaje": "Puente Aranda / SO2: sin ningún dato válido en 2026-10.",
+      "severidad": "aviso",
+      "variable": "SO2"
+    }
+  ],
+  "estaciones": {
+    "Guaymaral": {
+      "contaminantes": {
+        "CO": {
+          "disponible": true,
+          "evaluable": true,
+          "media_mensual_ugm3": 453.26,
+          "n_esperados": 744,
+          "n_validos": 736,
+          "promedios": {
+            "1h": {
+              "cumple": true,
+              "excedencias": [],
+              "limite_ugm3": 35000,
+              "maximo": {
+                "conclusion": "CO (1h): 1911.98 µg/m³, cumple el nivel máximo permisible de 35000 µg/m³.",
+                "fecha_hora": "2026-10-20 07:00",
+                "valor_ugm3": 1911.98
+              },
+              "n_excedencias": 0,
+              "n_promedios_validos": 736,
+              "niveles_excepcionales": [],
+              "regla_limite": "LIM-CO-1H"
+            },
+            "8h": {
+              "cumple": true,
+              "excedencias": [],
+              "limite_ugm3": 5000,
+              "maximo": {
+                "conclusion": "CO (8h): 1256.53 µg/m³, cumple el nivel máximo permisible de 5000 µg/m³.",
+                "fecha_hora": "2026-10-28 01:00",
+                "valor_ugm3": 1256.53
+              },
+              "n_excedencias": 0,
+              "n_promedios_validos": 733,
+              "niveles_excepcionales": [],
+              "regla_limite": "LIM-CO-8H"
+            }
+          },
+          "representatividad_pct": 98.92
+        },
+        "NO2": {
+          "disponible": true,
+          "evaluable": true,
+          "media_mensual_ugm3": 20.23,
+          "n_esperados": 744,
+          "n_validos": 691,
+          "promedios": {
+            "1h": {
+              "cumple": true,
+              "excedencias": [],
+              "limite_ugm3": 200,
+              "maximo": {
+                "conclusion": "NO2 (1h): 93.08 µg/m³, cumple el nivel máximo permisible de 200 µg/m³.",
+                "fecha_hora": "2026-10-27 18:00",
+                "valor_ugm3": 93.08
+              },
+              "n_excedencias": 0,
+              "n_promedios_validos": 691,
+              "niveles_excepcionales": [],
+              "regla_limite": "LIM-NO2-1H"
+            }
+          },
+          "representatividad_pct": 92.88
+        },
+        "O3": {
+          "disponible": true,
+          "evaluable": true,
+          "media_mensual_ugm3": 28.14,
+          "n_esperados": 744,
+          "n_validos": 691,
+          "promedios": {
+            "8h": {
+              "cumple": true,
+              "excedencias": [],
+              "limite_ugm3": 100,
+              "maximo": {
+                "conclusion": "O3 (8h): 83.48 µg/m³, cumple el nivel máximo permisible de 100 µg/m³.",
+                "fecha_hora": "2026-10-28 18:00",
+                "valor_ugm3": 83.48
+              },
+              "n_excedencias": 0,
+              "n_promedios_validos": 672,
+              "niveles_excepcionales": [],
+              "regla_limite": "LIM-O3-8H"
+            }
+          },
+          "representatividad_pct": 92.88
+        },
+        "PM10": {
+          "disponible": true,
+          "evaluable": true,
+          "media_mensual_ugm3": 22.54,
+          "n_esperados": 744,
+          "n_validos": 734,
+          "promedios": {
+            "24h": {
+              "cumple": true,
+              "excedencias": [],
+              "limite_ugm3": 75,
+              "maximo": {
+                "conclusion": "PM10 (24h): 39.75 µg/m³, cumple el nivel máximo permisible de 75 µg/m³.",
+                "fecha_hora": "2026-10-28",
+                "valor_ugm3": 39.75
+              },
+              "n_excedencias": 0,
+              "n_promedios_validos": 31,
+              "niveles_excepcionales": [],
+              "regla_limite": "LIM-PM10-24H"
+            }
+          },
+          "representatividad_pct": 98.66
+        },
+        "PM2.5": {
+          "disponible": true,
+          "evaluable": true,
+          "media_mensual_ugm3": 9.18,
+          "n_esperados": 744,
+          "n_validos": 657,
+          "promedios": {
+            "24h": {
+              "cumple": true,
+              "excedencias": [],
+              "limite_ugm3": 37,
+              "maximo": {
+                "conclusion": "PM2.5 (24h): 19.5 µg/m³, cumple el nivel máximo permisible de 37 µg/m³.",
+                "fecha_hora": "2026-10-28",
+                "valor_ugm3": 19.5
+              },
+              "n_excedencias": 0,
+              "n_promedios_validos": 25,
+              "niveles_excepcionales": [],
+              "regla_limite": "LIM-PM25-24H"
+            }
+          },
+          "representatividad_pct": 88.31
+        },
+        "SO2": {
+          "disponible": true,
+          "evaluable": true,
+          "media_mensual_ugm3": 3.8,
+          "n_esperados": 744,
+          "n_validos": 571,
+          "promedios": {
+            "1h": {
+              "cumple": true,
+              "excedencias": [],
+              "limite_ugm3": 100,
+              "maximo": {
+                "conclusion": "SO2 (1h): 42.42 µg/m³, cumple el nivel máximo permisible de 100 µg/m³.",
+                "fecha_hora": "2026-10-26 08:00",
+                "valor_ugm3": 42.42
+              },
+              "n_excedencias": 0,
+              "n_promedios_validos": 571,
+              "niveles_excepcionales": [],
+              "regla_limite": "LIM-SO2-1H"
+            },
+            "24h": {
+              "cumple": true,
+              "excedencias": [],
+              "limite_ugm3": 50,
+              "maximo": {
+                "conclusion": "SO2 (24h): 7.05 µg/m³, cumple el nivel máximo permisible de 50 µg/m³.",
+                "fecha_hora": "2026-10-26",
+                "valor_ugm3": 7.05
+              },
+              "n_excedencias": 0,
+              "n_promedios_validos": 19,
+              "niveles_excepcionales": [],
+              "regla_limite": "LIM-SO2-24H"
+            }
+          },
+          "representatividad_pct": 76.75
+        }
+      },
+      "meteorologia": {
+        "precipitacion": {
+          "dias_con_lluvia": 17,
+          "disponible": true,
+          "representatividad_pct": 100.0,
+          "total_mm": 104.5,
+          "unidad_origen": "mm",
+          "variable_origen": "Precipitacion"
+        },
+        "temperatura": {
+          "disponible": true,
+          "maxima_c": 25.3,
+          "media_c": 15.65,
+          "minima_c": 7.3,
+          "representatividad_pct": 100.0,
+          "unidad_origen": "°C",
+          "variable_origen": "Temperatura"
+        },
+        "viento_velocidad": {
+          "disponible": true,
+          "maxima_ms": 3.1,
+          "media_ms": 1.21,
+          "representatividad_pct": 100.0,
+          "unidad_origen": "m/s",
+          "variable_origen": "Vel Viento 10M"
+        }
+      }
+    },
+    "Kennedy": {
+      "contaminantes": {
+        "CO": {
+          "disponible": true,
+          "evaluable": true,
+          "media_mensual_ugm3": 1195.17,
+          "n_esperados": 744,
+          "n_validos": 732,
+          "promedios": {
+            "1h": {
+              "cumple": true,
+              "excedencias": [],
+              "limite_ugm3": 35000,
+              "maximo": {
+                "conclusion": "CO (1h): 3789.62 µg/m³, cumple el nivel máximo permisible de 35000 µg/m³.",
+                "fecha_hora": "2026-10-14 22:00",
+                "valor_ugm3": 3789.62
+              },
+              "n_excedencias": 0,
+              "n_promedios_validos": 732,
+              "niveles_excepcionales": [],
+              "regla_limite": "LIM-CO-1H"
+            },
+            "8h": {
+              "cumple": true,
+              "excedencias": [],
+              "limite_ugm3": 5000,
+              "maximo": {
+                "conclusion": "CO (8h): 2477.89 µg/m³, cumple el nivel máximo permisible de 5000 µg/m³.",
+                "fecha_hora": "2026-10-08 11:00",
+                "valor_ugm3": 2477.89
+              },
+              "n_excedencias": 0,
+              "n_promedios_validos": 727,
+              "niveles_excepcionales": [],
+              "regla_limite": "LIM-CO-8H"
+            }
+          },
+          "representatividad_pct": 98.39
+        },
+        "NO2": {
+          "disponible": true,
+          "evaluable": true,
+          "media_mensual_ugm3": 37.9,
+          "n_esperados": 744,
+          "n_validos": 722,
+          "promedios": {
+            "1h": {
+              "cumple": true,
+              "excedencias": [],
+              "limite_ugm3": 200,
+              "maximo": {
+                "conclusion": "NO2 (1h): 110 µg/m³, cumple el nivel máximo permisible de 200 µg/m³.",
+                "fecha_hora": "2026-10-27 18:00",
+                "valor_ugm3": 110.0
+              },
+              "n_excedencias": 0,
+              "n_promedios_validos": 722,
+              "niveles_excepcionales": [],
+              "regla_limite": "LIM-NO2-1H"
+            }
+          },
+          "representatividad_pct": 97.04
+        },
+        "O3": {
+          "disponible": true,
+          "evaluable": false,
+          "media_mensual_ugm3": null,
+          "n_esperados": 744,
+          "n_validos": 417,
+          "promedios": {
+            "8h": {
+              "cumple": null,
+              "excedencias": [],
+              "indicativo": {
+                "maximo": {
+                  "conclusion": "O3 (8h): 79.78 µg/m³, cumple el nivel máximo permisible de 100 µg/m³.",
+                  "fecha_hora": "2026-10-28 18:00",
+                  "valor_ugm3": 79.78
+                },
+                "n_excedencias": 0
+              },
+              "limite_ugm3": 100,
+              "maximo": null,
+              "n_excedencias": 0,
+              "n_promedios_validos": 408,
+              "niveles_excepcionales": [],
+              "regla_limite": "LIM-O3-8H"
+            }
+          },
+          "representatividad_pct": 56.05
+        },
+        "PM10": {
+          "disponible": true,
+          "evaluable": true,
+          "media_mensual_ugm3": 35.82,
+          "n_esperados": 744,
+          "n_validos": 726,
+          "promedios": {
+            "24h": {
+              "cumple": false,
+              "excedencias": [
+                {
+                  "fecha_hora": "2026-10-28",
+                  "limite_ugm3": 75,
+                  "regla_id": "LIM-PM10-24H",
+                  "valor_ugm3": 80.24
+                }
+              ],
+              "limite_ugm3": 75,
+              "maximo": {
+                "conclusion": "PM10 (24h): 80.24 µg/m³, excede el nivel máximo permisible de 75 µg/m³.",
+                "fecha_hora": "2026-10-28",
+                "valor_ugm3": 80.24
+              },
+              "n_excedencias": 1,
+              "n_promedios_validos": 31,
+              "niveles_excepcionales": [],
+              "regla_limite": "LIM-PM10-24H"
+            }
+          },
+          "representatividad_pct": 97.58
+        },
+        "PM2.5": {
+          "disponible": true,
+          "evaluable": true,
+          "media_mensual_ugm3": 16.03,
+          "n_esperados": 744,
+          "n_validos": 711,
+          "promedios": {
+            "24h": {
+              "cumple": false,
+              "excedencias": [
+                {
+                  "fecha_hora": "2026-10-28",
+                  "limite_ugm3": 37,
+                  "regla_id": "LIM-PM25-24H",
+                  "valor_ugm3": 41.29
+                }
+              ],
+              "limite_ugm3": 37,
+              "maximo": {
+                "conclusion": "PM2.5 (24h): 41.29 µg/m³, excede el nivel máximo permisible de 37 µg/m³ y está en nivel de prevención (Tabla 4).",
+                "fecha_hora": "2026-10-28",
+                "valor_ugm3": 41.29
+              },
+              "n_excedencias": 1,
+              "n_promedios_validos": 30,
+              "niveles_excepcionales": [
+                {
+                  "fecha_hora": "2026-10-28",
+                  "nivel": "prevencion",
+                  "regla_id": "NIV-PM25-24H-PREVENCION",
+                  "valor_ugm3": 41.29
+                }
+              ],
+              "regla_limite": "LIM-PM25-24H"
+            }
+          },
+          "representatividad_pct": 95.56
+        },
+        "SO2": {
+          "disponible": true,
+          "evaluable": true,
+          "media_mensual_ugm3": 3.91,
+          "n_esperados": 744,
+          "n_validos": 732,
+          "promedios": {
+            "1h": {
+              "cumple": true,
+              "excedencias": [],
+              "limite_ugm3": 100,
+              "maximo": {
+                "conclusion": "SO2 (1h): 23.57 µg/m³, cumple el nivel máximo permisible de 100 µg/m³.",
+                "fecha_hora": "2026-10-28 08:00",
+                "valor_ugm3": 23.57
+              },
+              "n_excedencias": 0,
+              "n_promedios_validos": 732,
+              "niveles_excepcionales": [],
+              "regla_limite": "LIM-SO2-1H"
+            },
+            "24h": {
+              "cumple": true,
+              "excedencias": [],
+              "limite_ugm3": 50,
+              "maximo": {
+                "conclusion": "SO2 (24h): 9.98 µg/m³, cumple el nivel máximo permisible de 50 µg/m³.",
+                "fecha_hora": "2026-10-05",
+                "valor_ugm3": 9.98
+              },
+              "n_excedencias": 0,
+              "n_promedios_validos": 31,
+              "niveles_excepcionales": [],
+              "regla_limite": "LIM-SO2-24H"
+            }
+          },
+          "representatividad_pct": 98.39
+        }
+      },
+      "meteorologia": {
+        "precipitacion": {
+          "dias_con_lluvia": 17,
+          "disponible": true,
+          "representatividad_pct": 99.6,
+          "total_mm": 49.8,
+          "unidad_origen": "mm",
+          "variable_origen": "Precipitacion"
+        },
+        "temperatura": {
+          "disponible": false
+        },
+        "viento_velocidad": {
+          "disponible": true,
+          "maxima_ms": 4.2,
+          "media_ms": 1.31,
+          "representatividad_pct": 99.6,
+          "unidad_origen": "m/s",
+          "variable_origen": "Vel Viento"
+        }
+      }
+    },
+    "Puente Aranda": {
+      "contaminantes": {
+        "CO": {
+          "disponible": true,
+          "evaluable": true,
+          "media_mensual_ugm3": 905.02,
+          "n_esperados": 744,
+          "n_validos": 735,
+          "promedios": {
+            "1h": {
+              "cumple": true,
+              "excedencias": [],
+              "limite_ugm3": 35000,
+              "maximo": {
+                "conclusion": "CO (1h): 3354.56 µg/m³, cumple el nivel máximo permisible de 35000 µg/m³.",
+                "fecha_hora": "2026-10-27 20:00",
+                "valor_ugm3": 3354.56
+              },
+              "n_excedencias": 0,
+              "n_promedios_validos": 735,
+              "niveles_excepcionales": [],
+              "regla_limite": "LIM-CO-1H"
+            },
+            "8h": {
+              "cumple": true,
+              "excedencias": [],
+              "limite_ugm3": 5000,
+              "maximo": {
+                "conclusion": "CO (8h): 2807.87 µg/m³, cumple el nivel máximo permisible de 5000 µg/m³.",
+                "fecha_hora": "2026-10-28 01:00",
+                "valor_ugm3": 2807.87
+              },
+              "n_excedencias": 0,
+              "n_promedios_validos": 733,
+              "niveles_excepcionales": [],
+              "regla_limite": "LIM-CO-8H"
+            }
+          },
+          "representatividad_pct": 98.79
+        },
+        "NO2": {
+          "disponible": true,
+          "evaluable": true,
+          "media_mensual_ugm3": 51.03,
+          "n_esperados": 744,
+          "n_validos": 737,
+          "promedios": {
+            "1h": {
+              "cumple": true,
+              "excedencias": [],
+              "limite_ugm3": 200,
+              "maximo": {
+                "conclusion": "NO2 (1h): 132.57 µg/m³, cumple el nivel máximo permisible de 200 µg/m³.",
+                "fecha_hora": "2026-10-27 19:00",
+                "valor_ugm3": 132.57
+              },
+              "n_excedencias": 0,
+              "n_promedios_validos": 737,
+              "niveles_excepcionales": [],
+              "regla_limite": "LIM-NO2-1H"
+            }
+          },
+          "representatividad_pct": 99.06
+        },
+        "O3": {
+          "disponible": true,
+          "evaluable": true,
+          "media_mensual_ugm3": 14.38,
+          "n_esperados": 744,
+          "n_validos": 736,
+          "promedios": {
+            "8h": {
+              "cumple": true,
+              "excedencias": [],
+              "limite_ugm3": 100,
+              "maximo": {
+                "conclusion": "O3 (8h): 46.25 µg/m³, cumple el nivel máximo permisible de 100 µg/m³.",
+                "fecha_hora": "2026-10-28 18:00",
+                "valor_ugm3": 46.25
+              },
+              "n_excedencias": 0,
+              "n_promedios_validos": 733,
+              "niveles_excepcionales": [],
+              "regla_limite": "LIM-O3-8H"
+            }
+          },
+          "representatividad_pct": 98.92
+        },
+        "PM10": {
+          "disponible": true,
+          "evaluable": true,
+          "media_mensual_ugm3": 25.13,
+          "n_esperados": 744,
+          "n_validos": 716,
+          "promedios": {
+            "24h": {
+              "cumple": true,
+              "excedencias": [],
+              "limite_ugm3": 75,
+              "maximo": {
+                "conclusion": "PM10 (24h): 62.4 µg/m³, cumple el nivel máximo permisible de 75 µg/m³.",
+                "fecha_hora": "2026-10-28",
+                "valor_ugm3": 62.4
+              },
+              "n_excedencias": 0,
+              "n_promedios_validos": 31,
+              "niveles_excepcionales": [],
+              "regla_limite": "LIM-PM10-24H"
+            }
+          },
+          "representatividad_pct": 96.24
+        },
+        "PM2.5": {
+          "disponible": true,
+          "evaluable": true,
+          "media_mensual_ugm3": 9.6,
+          "n_esperados": 744,
+          "n_validos": 742,
+          "promedios": {
+            "24h": {
+              "cumple": true,
+              "excedencias": [],
+              "limite_ugm3": 37,
+              "maximo": {
+                "conclusion": "PM2.5 (24h): 35.34 µg/m³, cumple el nivel máximo permisible de 37 µg/m³.",
+                "fecha_hora": "2026-10-28",
+                "valor_ugm3": 35.34
+              },
+              "n_excedencias": 0,
+              "n_promedios_validos": 31,
+              "niveles_excepcionales": [],
+              "regla_limite": "LIM-PM25-24H"
+            }
+          },
+          "representatividad_pct": 99.73
+        },
+        "SO2": {
+          "disponible": true,
+          "evaluable": false,
+          "media_mensual_ugm3": null,
+          "n_esperados": 744,
+          "n_validos": 0,
+          "promedios": {
+            "1h": {
+              "cumple": null,
+              "excedencias": [],
+              "limite_ugm3": 100,
+              "maximo": null,
+              "n_excedencias": 0,
+              "n_promedios_validos": 0,
+              "niveles_excepcionales": [],
+              "regla_limite": "LIM-SO2-1H"
+            },
+            "24h": {
+              "cumple": null,
+              "excedencias": [],
+              "limite_ugm3": 50,
+              "maximo": null,
+              "n_excedencias": 0,
+              "n_promedios_validos": 0,
+              "niveles_excepcionales": [],
+              "regla_limite": "LIM-SO2-24H"
+            }
+          },
+          "representatividad_pct": 0.0
+        }
+      },
+      "meteorologia": {
+        "precipitacion": {
+          "dias_con_lluvia": 18,
+          "disponible": true,
+          "representatividad_pct": 100.0,
+          "total_mm": 111.5,
+          "unidad_origen": "mm",
+          "variable_origen": "Precipitacion"
+        },
+        "temperatura": {
+          "disponible": true,
+          "maxima_c": 23.3,
+          "media_c": 16.54,
+          "minima_c": 12.0,
+          "representatividad_pct": 100.0,
+          "unidad_origen": "°C",
+          "variable_origen": "Temperatura"
+        },
+        "viento_velocidad": {
+          "disponible": true,
+          "maxima_ms": 4.1,
+          "media_ms": 1.55,
+          "representatividad_pct": 100.0,
+          "unidad_origen": "m/s",
+          "variable_origen": "Vel Viento"
+        }
+      }
+    }
+  },
+  "meta": {
+    "contaminantes": [
+      "PM10",
+      "PM2.5",
+      "SO2",
+      "NO2",
+      "O3",
+      "CO"
+    ],
+    "datos_preliminares": true,
+    "definiciones_meteorologia": [
+      "Día con lluvia: día calendario con precipitación acumulada mayor que 0 mm.",
+      "Temperatura mínima, máxima y velocidad máxima del viento: extremos de los promedios horarios.",
+      "Si una estación mide la temperatura a varias alturas se usa la serie `Temperatura` (pendiente de confirmar)."
+    ],
+    "esquema": "aire_mensual v1",
+    "n_esperados": 744,
+    "norma": "Resolución 2254 de 2017",
+    "periodo": "2026-10",
+    "representatividad_minima_pct": 75,
+    "supuestos": [
+      "Promedios de corto plazo: 8 h = media móvil retrospectiva de 8 horas, calculada en cada hora; 24 h = día calendario (las horas que terminan de 01:00 a 24:00). Horas válidas mínimas: 6 de 8 y 18 de 24 (verificado: False).",
+      "Gases convertidos a µg/m³ a 25 °C y 760 mmHg.",
+      "Excede = promedio > límite, sin redondear.",
+      "Una serie con menos del 75 % de horas válidas es indicativa y no se evalúa.",
+      "Los límites anuales no se evalúan con un solo mes."
+    ]
+  },
+  "resumen": {
+    "estaciones_no_evaluables": [
+      {
+        "contaminante": "O3",
+        "estacion": "Kennedy",
+        "representatividad_pct": 56.05
+      },
+      {
+        "contaminante": "SO2",
+        "estacion": "Puente Aranda",
+        "representatividad_pct": 0.0
+      }
+    ],
+    "excedencias_por_contaminante": {
+      "CO": {
+        "1h": {
+          "estaciones": [],
+          "n_excedencias": 0
+        },
+        "8h": {
+          "estaciones": [],
+          "n_excedencias": 0
+        }
+      },
+      "NO2": {
+        "1h": {
+          "estaciones": [],
+          "n_excedencias": 0
+        }
+      },
+      "O3": {
+        "8h": {
+          "estaciones": [],
+          "n_excedencias": 0
+        }
+      },
+      "PM10": {
+        "24h": {
+          "estaciones": [
+            "Kennedy"
+          ],
+          "n_excedencias": 1
+        }
+      },
+      "PM2.5": {
+        "24h": {
+          "estaciones": [
+            "Kennedy"
+          ],
+          "n_excedencias": 1
+        }
+      },
+      "SO2": {
+        "1h": {
+          "estaciones": [],
+          "n_excedencias": 0
+        },
+        "24h": {
+          "estaciones": [],
+          "n_excedencias": 0
+        }
+      }
+    }
+  }
+}
