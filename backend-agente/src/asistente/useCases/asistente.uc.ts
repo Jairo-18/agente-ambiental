@@ -3,17 +3,20 @@ import { AdjuntosService } from '../../chat/services/adjuntos.service';
 import { ChatAdjunto } from '../../shared/entities/chatAdjunto.entity';
 import { ConversacionRepository } from '../../shared/repositories/conversacion.repository';
 import { MensajeRepository } from '../../shared/repositories/mensaje.repository';
+import { transcripcionIncluida } from '../../shared/utils/texto.util';
 import { TrabajosService } from '../../trabajos/services/trabajos.service';
 import { AgenteService } from '../services/agente.service';
 import { ConfirmacionesService } from '../services/confirmaciones.service';
 import { HerramientasService } from '../services/herramientas.service';
 
 /** Lo que el agente "ve" de cada evidencia: el modelo de texto no ve imágenes, pero sí su descripción y las transcripciones. */
-function describirEvidencias(adjuntos: ChatAdjunto[]): string {
+function describirEvidencias(adjuntos: ChatAdjunto[], mensaje: string): string {
   return adjuntos
     .map((a) => {
       if (a.tipo === 'imagen') return `[Foto adjunta «${a.nombre}»${a.texto ? `: ${a.texto.slice(0, 800)}` : ' (sin descripción)'}]`;
-      if (a.tipo === 'audio') return a.dictado ? '' : `[Audio adjunto transcrito: ${(a.texto ?? '').slice(0, 1500)}]`;
+      // la nota dictada ya es el mensaje, salvo que se haya enviado con la caja vacía (o borrada)
+      if (a.tipo === 'audio' && a.dictado) return a.texto && !transcripcionIncluida(mensaje, a.texto) ? `[Lo que dijo en la nota de voz: ${a.texto.slice(0, 1500)}]` : '';
+      if (a.tipo === 'audio') return `[Audio adjunto transcrito: ${(a.texto ?? '').slice(0, 1500)}]`;
       return `[Documento adjunto «${a.nombre}»: ${(a.texto ?? '').slice(0, 1500)}]`;
     })
     .filter(Boolean)
@@ -47,7 +50,7 @@ export class AsistenteUC {
       evidencias: [...new Set([...this.herramientas.contexto.evidencias, ...adjuntoIds])],
       canal: canal === 'voz' || this.herramientas.contexto.canal === 'voz' ? 'voz' : 'texto',
     };
-    const extra = describirEvidencias(evidencias);
+    const extra = describirEvidencias(evidencias, mensaje);
     const turno = await this.agente.responder(extra ? `${mensaje}\n\n${extra}` : mensaje);
     const llamadas = turno.llamadas.map((l) => ({ herramienta: l.herramienta, argumentos: l.argumentos, error: (l.resultado.error as string | undefined) ?? null }));
     await this.mensajes.registrar(conversacion, 'agente', turno.respuesta, llamadas, turno.origen);

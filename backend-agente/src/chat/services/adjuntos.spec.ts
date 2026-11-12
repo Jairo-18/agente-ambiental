@@ -129,6 +129,15 @@ describe('ContextoService', () => {
     expect(mensajes[0].archivos).toEqual([{ nombre: 'grafico.png', mime: 'image/png', base64: Buffer.from('x').toString('base64') }]);
   });
 
+  it('la nota de voz dictada enviada con la caja vacía sí le llega al modelo (regresión 2026-11-11)', async () => {
+    const voz = adjunto({ chatAdjuntoId: 'v', tipo: 'audio', nombre: 'nota.webm', mime: 'audio/webm', texto: 'Necesito que me digas para qué sirve este agente.', dictado: true });
+    const { mensajes } = await ctx.armar([mensaje(1, 'usuario', 'Revisa los archivos adjuntos.')], new Map([[1, [voz]]]), modelo());
+    expect(mensajes[0].contenido).toContain('[Nota de voz transcrita: Necesito que me digas para qué sirve este agente.]');
+    // corregida a mano en la caja: no se repite
+    const { mensajes: m2 } = await ctx.armar([mensaje(1, 'usuario', 'necesito que me digas para que sirve este agente de reportes')], new Map([[1, [voz]]]), modelo());
+    expect(m2[0].contenido).not.toContain('Nota de voz');
+  });
+
   it('valida: imágenes en un modelo sin visión y PDF escaneado fuera de Claude', () => {
     expect(() => ctx.validar([adjunto({ tipo: 'imagen', mime: 'image/png' })], modelo())).toThrow(/no ve imágenes/);
     expect(() => ctx.validar([adjunto({ texto: null })], modelo())).toThrow(/no tiene texto/);

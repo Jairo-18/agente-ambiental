@@ -2,6 +2,7 @@ import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { ArchivoBinario, MensajeChat, ModeloInfo } from '../../llm/interfaces/chat.interface';
 import { ChatAdjunto } from '../../shared/entities/chatAdjunto.entity';
 import { ChatMensaje } from '../../shared/entities/chatMensaje.entity';
+import { transcripcionIncluida } from '../../shared/utils/texto.util';
 import { MemoriaService } from './memoria.service';
 
 /** Cómo entraron los archivos de la conversación en la petición (se le muestra al usuario). */
@@ -87,6 +88,9 @@ export class ContextoService {
               const texto = recorte < 1 ? `${a.texto!.slice(0, Math.floor(a.texto!.length * recorte))}\n(… recortado: no cabía entero)` : a.texto!;
               partes.push(`<archivo ${atributos(a)}>\n${texto}\n</archivo>`);
             }
+          } else if (a.tipo === 'audio' && a.dictado && a.texto && !transcripcionIncluida(m.contenido, a.texto)) {
+            // se envió la nota de voz sin su texto en la caja (vacía o borrada): el modelo necesita lo que se dijo
+            partes.push(`[Nota de voz transcrita: ${a.texto}]`);
           } else if (a.tipo === 'imagen' && m !== ultimo) {
             partes.push(`[Imagen adjunta «${a.nombre}»${a.texto ? `: ${a.texto.slice(0, 600)}` : ''}]`);
           } else if (a.tipo === 'documento' && !a.texto && m !== ultimo) {
